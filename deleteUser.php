@@ -2,27 +2,22 @@
 // Initialize the session
 session_start();
  
+require 'authentication.php'; 
 // Check if the user is already logged in, if yes then redirect him to welcome page
-if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
-    if($_SESSION["account"] != "admin"){
-        echo ("Error 403: You do  not have authorization for this page");
-        die();
+if(auth_is_logged_in()===true){
+    if(auth_is_admin()!==true){
+        error403();
     }
 }
 else{
-    echo ("Error 401: Unauthorized");
-    die();
+    error401();
 }
 
 $id=$_GET["del"];
+$status=$_GET["status"];
 require 'dbconfig.php';
 
-	$conn = new mysqli($host, $username, $password, $dbname);
-
-    // Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
+	
 
 	$sql = "update tbl_user set isActive = ? WHERE id = ?";
 
@@ -31,7 +26,7 @@ require 'dbconfig.php';
             mysqli_stmt_bind_param($stmt, "ii", $param_status , $param_id);
             
             // Set parameters
-            $param_status  = 0;
+            $param_status  =($status == 0) ? 1 : 0; //if user active so deactivate him ,else active him
             $param_id = $id;
     
             // Attempt to execute the prepared statement

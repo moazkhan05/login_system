@@ -1,58 +1,44 @@
 <?php
 
 session_start();
- 
+require 'authentication.php';
+require 'actions.php';
+require 'dbconfig.php';
+
+//--------------Authentication-------------------------------
 // Check if the user is already logged in, if yes then redirect him to welcome page
-if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
-    if($_SESSION["account"] != "admin"){
-        echo ("Error 403: You do  not have authorization for this page");
-        die();
+if(auth_is_logged_in()===true){
+    if(auth_is_admin()===false){
+        error403();
     }
 }
 else{
-    echo ("Error 401: Unauthorized");
-    die();
+    error401();
 }
- 
+//--------------Ends Authentication------------------------------- 
 
-require 'actions.php';
+//------------page load------------------------------
+
+  $admin_id=$_SESSION["id"];
+  $param_account='user';
+  // Prepare a select statement
+  $sql = "SELECT id,name,email, phone_number, isActive FROM tbl_user WHERE account_type = '$param_account'";
+
+  $rows=$conn->query($sql);
+  $row= mysqli_fetch_all($rows);
+  foreach ($row as $r ) {
+    $id=($r[0]);
+  }
+          
+//------------page load end------------------------------
 
 
-
-
-
+//-----------Logging out-------------
 if(isset($_POST['btn-log-out'])){
     echo "I'm here in btn-login";
     logout();
 }
-
-
-//------------page load------------------------------
-require 'dbconfig.php';
-    $conn = new mysqli($host, $username, $password, $dbname);
-
-    // Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-    //if connection build
-    session_start();
-    $email=$_SESSION["id"];
-    
-    
-
-      $param_account='user';
-      // Prepare a select statement
-      $sql = "SELECT id,name,email, phone_number, isActive FROM tbl_user WHERE account_type = '$param_account'";
-
-      $rows=$conn->query($sql);
-      $row= mysqli_fetch_all($rows);
-      foreach ($row as $r ) {
-        $id=($r[0]);
-      }
-          
-  
-//------------page load end------------------------------
+//-----------END Logging out-------------
 
 
 // Close connection
@@ -113,9 +99,9 @@ require 'dbconfig.php';
                     <th>Name</th>
                     <th>Email</th>
                     <th>Phone</th>
-                    <th>Active User</th>
+                    <th>Activate/Deactivate</th>
                     <th>Edit</th>
-                    <th>Delete</th>
+                    
                     
                   </tr>
                 </thead>
@@ -133,10 +119,16 @@ require 'dbconfig.php';
                        <?php echo htmlspecialchars($r[3]) ?>
                       </td>
                       <td name ="text-status" style="text-align: center;">
-                       <?php echo htmlspecialchars($r[4]) ?>
+                            <a href="deleteUser.php?del=<?php echo $r['0'];?>&status=<?php echo $r['4']?>" class="del-btn" >
+                                <?php echo htmlspecialchars($r[4]) ?>
+                            </a>
                       </td>
-                      <td><a href="edit-user-details.php?edit-details=<?php echo $r['0']; ?>" class="edit_btn" name="btn-edit">Edit</a></td>
-                      <td><a href="deleteUser.php?del=<?php echo $r['0']; ?>" class="del-btn" style="color:red;">Delete</a></td>
+                      <td>
+                            <a href="edit-user-details.php?edit-details=<?php echo $r['0']; ?>" class="edit_btn" name="btn-edit" style="color:green;">
+                                Edit
+                            </a>
+                      </td>
+                      
                       
                     </tr>
                   <?php endforeach; ?>

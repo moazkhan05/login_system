@@ -1,27 +1,11 @@
 
 <?php
-// Initialize the session
-// session_start();
- 
-// // Check if the user is already logged in, if yes then redirect him to welcome page
-// if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
-//     header("location: welcome.php");
-//     exit;
-// }
- 
-
 
 //---------------------------------------registration function start----------------------------------------------------
 function registration(){
         // Include config file
-        require 'dbconfig.php';
-        $conn = new mysqli($host, $username, $password, $dbname);
-
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-        //if connection build
+        require 'dbconfig.php';       
+        //connection build
 
         // Define variables and initialize with empty values
         $name = $email = $password = $confirm_password = $mobile_number ="";
@@ -158,6 +142,9 @@ function registration(){
                     mysqli_stmt_close($stmt);
                 }
             }
+            else{
+                $_POST["txt-email-error"]=$email_err;
+            }
             
             // Close connection
             mysqli_close($conn);
@@ -172,12 +159,6 @@ function login(){
     session_start();
     //configuring data base
     require 'dbconfig.php';
-    $conn = new mysqli($host, $username, $password, $dbname);
-
-    // Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
     //if connection build
 
 
@@ -191,7 +172,7 @@ function login(){
         
         // Check if email is empty
         if(empty(trim($_POST["txt-email"]))){
-            $_POST['txt-email-error']=$email_err = "Please enter email.";
+            $email_err = "Please enter email.";
             
         } else{
             $email = trim($_POST["txt-email"]);
@@ -289,7 +270,7 @@ function logout(){
     session_destroy();
     
     // Redirect to login page
-    header("location: auth.php");
+    header("location: login-signup.php");
     exit;
 }
 

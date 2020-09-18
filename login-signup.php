@@ -1,17 +1,15 @@
 <?php
 
-
-
 require 'actions.php';
 
 
+//-----------------Login In Click-----------------
 if(isset($_POST['btn-login'])){
-    echo "I'm here in btn-login";
     login();
 }
 
+//-----------------Registration Click-----------------
 if(isset($_POST['btn-register'])){
-  echo "I'm here in btn-register";
   registration();
 }
 
@@ -75,7 +73,7 @@ if(isset($_POST['btn-register'])){
                               id="exampleInputEmail1" 
                               placeholder="Enter email"
                               name="txt-email">
-                      <span name="txt-email-error"></span>
+                      <span name="txt-email-error"><?php echo ($email_err); ?></span>
                     </div>
                     <div class="form-group">
                     <label for="exampleInputPassword1">Password</label>

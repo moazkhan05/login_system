@@ -1,209 +1,169 @@
 <?php
 session_start();
- 
+require 'authentication.php';
+require 'dbconfig.php';
+require 'actions.php';
+
 // Check if the user is already logged in, if yes then redirect him to welcome page
-if(isset($_SESSION["loggedin"]) === false && $_SESSION["loggedin"] != true){
-    echo ("Error 401: Unauthorized");
-    die();
+if(auth_is_logged_in()===false){
+    error401();
 }
-else if($_SESSION["account"] =="user"){
+else if(auth_is_user()){
         if($_SESSION["id"]!=$_GET["edit-details"]){
-            echo ("Error 403: You do  not have authorization for this page");
-            die();
+            error403();
         }
 }   
 
 
 
 
-require 'actions.php';
+
 
 //------------page load------------------------------
-require 'dbconfig.php';
 
-
-    $conn = new mysqli($host, $username, $password, $dbname);
-
-    // Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
     //if connection build
-    session_start();
+ 
     // Check if the user is already logged in, if yes then redirect him to welcome page
     
     $user_id=$_SESSION["id"];
     $edit_details_id=$_GET['edit-details'];
+ 
+    // Prepare a select statement
+    $sql = "SELECT  name, phone_number FROM tbl_user WHERE id = ?";
     
-    
-
-   
-            // Prepare a select statement
-            $sql = "SELECT  name, phone_number FROM tbl_user WHERE id = ?";
+    if($stmt = mysqli_prepare($conn, $sql)){
+        // Bind variables to the prepared statement as parameters
+        mysqli_stmt_bind_param($stmt, "s", $param_id);
+        
+        // Set parameters
+        $param_id = $edit_details_id;
+        
+        // Attempt to execute the prepared statement
+        if(mysqli_stmt_execute($stmt)){
+            // Store result
+           
+            mysqli_stmt_store_result($stmt);
+                              
+            // Check if email exists, if yes then verify password
+            if(mysqli_stmt_num_rows($stmt) == 1){  
+                 
+                // Bind result variables
+                mysqli_stmt_bind_result($stmt, $name, $mobile_number);             
+                //fetching data ($stmt);                  
+                mysqli_stmt_fetch($stmt);
+            } 
             
-            if($stmt = mysqli_prepare($conn, $sql)){
-                // Bind variables to the prepared statement as parameters
-                mysqli_stmt_bind_param($stmt, "s", $param_id);
-                
-                // Set parameters
-                $param_id = $edit_details_id;
-                
-                // Attempt to execute the prepared statement
-                if(mysqli_stmt_execute($stmt)){
-                    // Store result
-                   
-                    mysqli_stmt_store_result($stmt);
-                                      
-                    // Check if email exists, if yes then verify password
-                    if(mysqli_stmt_num_rows($stmt) == 1){  
-                         
-                        // Bind result variables
-                        mysqli_stmt_bind_result($stmt, $name, $mobile_number);
-                       
-                        //print_r ($stmt);                  
-                        if(mysqli_stmt_fetch($stmt)){
+        } 
+        else{
+            echo "Oops! Something went wrong. Please try again later.";
+        }
 
-                        }
-                        } else{
-                            // Display an error message if email doesn't exist
-                            $email_err = "No account found with that email.";
-                        }
-                } else{
-                    echo "Oops! Something went wrong. Please try again later.";
-                }
-
-                // Close statement
-                mysqli_stmt_close($stmt);
-            }    
+        // Close statement
+        mysqli_stmt_close($stmt);
+    }    
     
 //------------page load end------------------------------
 
             //update function
 if(isset($_POST['btn-update'])){
-   // Include config file
-        //require 'dbconfig.php';
-        //$conn = new mysqli($host, $username, $password, $dbname);
+ // Include config file
 
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
+//  Define variables and initialize with empty values
+      
+$name = $email = $mobile_number ="";
+$name_err = $email_err = $mobile_number_err ="";
+
+// Processing form data when form is submitted
+if($_SERVER["REQUEST_METHOD"] == "POST"){
+    // Validate name
+    if(empty(trim($_POST["txt-name"]))){
+        $name_err = "Please enter your name.";
+    } 
+    else{
+
+       $name = trim($_POST["txt-name"]); 
+    }
+    
+    // Validate mobile number
+    if(empty(trim($_POST["txt-number"]))){
+        $mobile_number_err = "Please enter your number.";
+    } 
+    //-----------------No Input Errors fetching data 
+    else{
+        // Prepare a select statement
+        $sql = "SELECT id FROM tbl_user WHERE phone_number = ?";
+        
+        if($stmt = mysqli_prepare($conn, $sql)){
+            // Bind variables to the prepared statement as parameters
+            mysqli_stmt_bind_param($stmt, "s", $param_mobile_number);
+            
+            // Set parameters
+            $param_mobile_number = trim($_POST["txt-number"]);
+            
+            // Attempt to execute the prepared statement
+            if(mysqli_stmt_execute($stmt)){
+                
+                /* store result */
+                mysqli_stmt_store_result($stmt);
+                
+                if(mysqli_stmt_num_rows($stmt) == 1){
+                   mysqli_stmt_bind_result($stmt, $id);
+                   mysqli_stmt_fetch($stmt);
+                }
+                else{
+                    if (strlen(trim($_POST["txt-number"]))===11){
+                      $mobile_number = trim($_POST["txt-number"]);  
+                    }else{
+                      $mobile_number_err= "Number is not valid";
+                    }
+                }
+            } else{
+                echo "Oops! Something went wrong. Please try again later.";
+            }
+            // Close statement
+            mysqli_stmt_close($stmt);
         }
-//        if connection build
+  }
+  //-----------------ENDS No Input Errors fetching data
 
-  //      Define variables and initialize with empty values
-        
-        $name = $email = $mobile_number ="";
-        $name_err = $email_err = $mobile_number_err ="";
-        
-        
-
-        // Processing form data when form is submitted
-        if($_SERVER["REQUEST_METHOD"] == "POST"){
-        
-
-            // Validate name
-            if(empty(trim($_POST["txt-name"]))){
-                $name_err = "Please enter your name.";
+  //-----------Update Details--------------------- 
+  if(empty($name_err) && empty($mobile_number_err) ){
+    
+        // Prepare an insert statement
+        $sql = "update tbl_user set name =?, phone_number=? where id = ?";
+        if($stmt = mysqli_prepare($conn, $sql)){
+            // Bind variables to the prepared statement as parameters
+            mysqli_stmt_bind_param($stmt, "ssi", $param_name , $param_mobile_number, $param_id);
+            
+            // Set parameters
+            $param_name = $name;
+            $param_mobile_number = $mobile_number;
+            $param_id = $edit_details_id;
+    
+            // Attempt to execute the prepared statement
+            if(mysqli_stmt_execute($stmt)){
+                // Redirect to login page
+                if(auth_is_admin()){
+                  header("location: admin-panel.php");
+                }
+                else{
+                  header("location: welcome.php");  
+                }
+                
             } 
             else{
-
-               $name = trim($_POST["txt-name"]); 
-                
+                echo "Something went wrong. Please try again later.";
             }
-            
-            
 
-            // Validate mobile number
-            if(empty(trim($_POST["txt-number"]))){
-                $mobile_number_err = "Please enter your number.";
-            } 
-            else{
-                // Prepare a select statement
-                $sql = "SELECT id FROM tbl_user WHERE phone_number = ?";
-                
-                if($stmt = mysqli_prepare($conn, $sql)){
-                    // Bind variables to the prepared statement as parameters
-                    mysqli_stmt_bind_param($stmt, "s", $param_mobile_number);
-                    
-                    // Set parameters
-                    $param_mobile_number = trim($_POST["txt-number"]);
-                    
-                    // Attempt to execute the prepared statement
-                    if(mysqli_stmt_execute($stmt)){
-                        
-                        /* store result */
-                        mysqli_stmt_store_result($stmt);
-                        
-                        if(mysqli_stmt_num_rows($stmt) == 1){
-                           mysqli_stmt_bind_result($stmt, $id);
-                           mysqli_stmt_fetch($stmt);
-                           if($edit_details_id!=$id){
-                            echo $edit_details_id, 'edit id';
-                            echo $id ,'user id';
-                            die();
-                            $mobile_number_err = "Number is already associate with another user .";
-                           }
-                            
-                        }
-                        else{
-                            if (strlen(trim($_POST["txt-number"]))===11){
-                              $mobile_number = trim($_POST["txt-number"]);  
-                            }else{
-                              $mobile_number_err= "Number is not valid";
-                            }
-                            
-                        }
-                    } else{
-                        echo "Oops! Something went wrong. Please try again later.";
-                    }
-
-                    // Close statement
-                    mysqli_stmt_close($stmt);
-                }
-            }
-         
-           //die();
-            // Check input errors before inserting in database
-            if(empty($name_err) && empty($mobile_number_err) ){
-            
-                // Prepare an insert statement
-                $sql = "update tbl_user set name =?, phone_number=? where id = ?";
-                //$acc_type='user';
-           
-          //echo $name ;
-          // echo "</br>";
-          // echo $mobile_number;
-          // die();
-
-                if($stmt = mysqli_prepare($conn, $sql)){
-                    // Bind variables to the prepared statement as parameters
-                    mysqli_stmt_bind_param($stmt, "ssi", $param_name , $param_mobile_number, $param_id);
-                    
-                    // Set parameters
-                    $param_name = $name;
-                    $param_mobile_number = $mobile_number;
-                    $param_id = $edit_details_id;
-            
-                    // Attempt to execute the prepared statement
-                    if(mysqli_stmt_execute($stmt)){
-                        // Redirect to login page
-                        if($_SESSION["account"]=="admin"){
-                        header("location: admin-panel.php");
-                        }
-                        header("location: welcome.php");
-                    } 
-                    else{
-                        echo "Something went wrong. Please try again later.";
-                    }
-
-                    // Close statement
-                    mysqli_stmt_close($stmt);
-                }
-            }
-            
-            // Close connection
-            mysqli_close($conn);
-          }
+            // Close statement
+            mysqli_stmt_close($stmt);
+        }
+    }
+    //----------- END Update Details---------------------
+    
+    // Close connection
+    mysqli_close($conn);
+  }
 
 }        
 // Close connection
@@ -257,11 +217,7 @@ if(isset($_POST['btn-update'])){
                     <input class="col-sm-8" type="text" name="txt-name" style="border-radius: inherit; width: 80%;" value="<?php echo htmlspecialchars($name) ?>">
                     
                   </div>
-                 <!--  <div class="row" style="margin-bottom: 5px;">
-                    <label class="col-sm-4">Email</label>
-                    <input class="col-sm-8" type="text" name="txt-email" style="border-radius: inherit; width: 90%;" value="<?php echo htmlspecialchars($email) ?>">
-                    
-                  </div> -->
+                 
                   <div class="row" style="margin-bottom: 5px;">
                     <label class="col-sm-4">Phone Number</label>
                     <input class="col-sm-8" type="text" name="txt-number" style="border-radius: inherit; width: 90%;" value="<?php echo htmlspecialchars($mobile_number) ?>">

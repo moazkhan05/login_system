@@ -1,71 +1,59 @@
 <?php
+session_start();
+require 'authentication.php';
+
+// Check if the user is already logged in, if yes then redirect him to welcome page
+if(auth_is_logged_in()===false){ // auth_is_logged_in() from authentication.php
+  error401();
+}
 
 require 'actions.php';
 
 
-//echo $_SESSION["loggedin"]
- 
-
-
 if(isset($_POST['btn-log-out'])){
-    echo "I'm here in btn-login";
     logout();
 }
+//authorization granted
+
 
 //------------page load------------------------------
-require 'dbconfig.php';
-    $conn = new mysqli($host, $username, $password, $dbname);
-
-    // Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-    //if connection build
-    session_start();
+require 'dbconfig.php'; 
     // Check if the user is already logged in, if yes then redirect him to welcome page
     
-    $email=$_SESSION["id"];
+    $id=$_SESSION["id"];
+    // Prepare a select statement
+    $sql = "SELECT  id,name,email, phone_number FROM tbl_user WHERE id = ?";
     
-    
+    if($stmt = mysqli_prepare($conn, $sql)){
+        // Bind variables to the prepared statement as parameters
+        mysqli_stmt_bind_param($stmt, "s", $param_id);
+        
+        // Set parameters
+        $param_id = $id;
+        
+        // Attempt to execute the prepared statement
+        if(mysqli_stmt_execute($stmt)){
+            // Store result
+            mysqli_stmt_store_result($stmt);   
+            // Check if id exists, if yes then verify password
+            if(mysqli_stmt_num_rows($stmt) == 1){  
+                // Bind result variables
+                mysqli_stmt_bind_result($stmt, $id,$name, $email, $mobile_number);
+                //print_r ($stmt);                  
+                mysqli_stmt_fetch($stmt);
+            } 
+            else{
+                  // Display an error message if id doesn't exist
+                  $id_err = "No account found with that email.";
+            }
+        } 
+        else{
+            echo "Oops! Something went wrong. Please try again later.";
+        }
 
-   
-            // Prepare a select statement
-            $sql = "SELECT  id,name,email, phone_number FROM tbl_user WHERE id = ?";
-            
-            if($stmt = mysqli_prepare($conn, $sql)){
-                // Bind variables to the prepared statement as parameters
-                mysqli_stmt_bind_param($stmt, "s", $param_email);
-                
-                // Set parameters
-                $param_email = $email;
-                
-                // Attempt to execute the prepared statement
-                if(mysqli_stmt_execute($stmt)){
-                    // Store result
-                   
-                    mysqli_stmt_store_result($stmt);
-                                      
-                    // Check if email exists, if yes then verify password
-                    if(mysqli_stmt_num_rows($stmt) == 1){  
-                         
-                        // Bind result variables
-                        mysqli_stmt_bind_result($stmt, $id,$name, $email, $mobile_number);
-                       
-                        //print_r ($stmt);                  
-                        if(mysqli_stmt_fetch($stmt)){
-
-                        }
-                        } else{
-                            // Display an error message if email doesn't exist
-                            $email_err = "No account found with that email.";
-                        }
-                } else{
-                    echo "Oops! Something went wrong. Please try again later.";
-                }
-
-                // Close statement
-                mysqli_stmt_close($stmt);
-            }    
+        // Close statement
+        mysqli_stmt_close($stmt);
+    }    
     
 //------------page load end------------------------------
 
@@ -185,3 +173,6 @@ require 'dbconfig.php';
   <script src="js/script.js"></script> 
 </body>
 </html>
+
+
+
