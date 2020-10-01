@@ -98,7 +98,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             mysqli_stmt_bind_param($stmt, "s", $param_mobile_number);
             
             // Set parameters
-            $param_mobile_number = trim($_POST["txt-number"]);
+            $param_mobile_number = $_POST["txt-number"];
             
             // Attempt to execute the prepared statement
             if(mysqli_stmt_execute($stmt)){
@@ -112,12 +112,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 }
                 else{
                     if (strlen(trim($_POST["txt-number"]))===11){
-                      $mobile_number = trim($_POST["txt-number"]);  
+                      $mobile_number = $_POST["txt-number"];  
                     }else{
                       $mobile_number_err= "Number is not valid";
                     }
                 }
-            } else{
+            } 
+            else{
                 echo "Oops! Something went wrong. Please try again later.";
             }
             // Close statement

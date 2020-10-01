@@ -5,14 +5,18 @@ body {
   font-family: 'Oxygen', sans-serif;
 }
 
+.form-error > p{
+  color:#ff3300;
+  margin-left: 1vw;
+}
+
+
 /** HEADER **/
 #header-nav {
   background-color: #000;
   border-radius: 0;
   border: 0;
 }
-
-
 
 .navbar-brand {
   padding-top: 25px;
@@ -170,7 +174,7 @@ body {
 .table{
   background-color:#4c4d4f;
   min-width:min-content;
-
+  width: 100%;
 }
 table thead{
   font-weight: 400;

@@ -152,7 +152,7 @@ if(isset($_POST['btn-log-out'])){
     <footer class="panel-footer"> <!-- footet starts -->
     <div class="container"> 
       <div class="row">
-        <section id="hours" class="col-sm-4">
+        <section id="detail-user" class="col-sm-4">
           <span>User Portal:</span><br>
           Registration<br>
           Login<br>
