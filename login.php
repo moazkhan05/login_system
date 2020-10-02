@@ -79,8 +79,8 @@
 
                            }
                            else{
-                               $_SESSION["error-status"]=true;
-                               $_SESSION["error"]="Incorrect Password";
+                            $_SESSION["error-status"]=true;
+                            $_SESSION["error"]="Incorrect Password";
                             $password_err="Incorrect Password";
                             mysqli_close($conn);
                             header("location: login-signup.php");
