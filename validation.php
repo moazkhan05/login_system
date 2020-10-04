@@ -3,13 +3,16 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 // print_r($_POST); die;
    if(isset($_POST['email_validation']) && $_POST['email_validation']==1){
-    $jsonCheck = new \Exception();
+    $jsonCheck = new \Exception();                                            // remove this excwption object. I wrote this just for example. No need to hve object in his scenario, use $_POST array.
         $email=$_POST['email'];
         $password=$_POST['password'];
         $jsonCheck->status=0;
         $jsonCheck->errors=null;
         $error = ['is_email' => null,'is_pwd' => null];
         
+        /*
+        Loop through $_POST and remove redundant duplicated code.
+        */
         if (empty($email)){   
             $error['is_email']="Enter Email to proceed";
         }
@@ -109,7 +112,7 @@ error_reporting(E_ALL);
             
         }
         //phone validation ends
-
+// no need to write such a big condition if you iterate on $_POST in a loop
         if(($error['name_check'] === null) && ($error['pwd_check'] === null)
             && ($error['email_check'] === null) && ($error['cnfrm_pwd_check'] === null)
             && ($error['number_check'] === null)
