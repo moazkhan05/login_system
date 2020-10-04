@@ -16,10 +16,16 @@ function auth_is_logged_in(){
     if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true){
       return true;
     }
-    else 
+    else                 // no need to write else blocks in these cases
       return false;
 }
+/*
+you can simply write in one line like this:
 
+function auth_is_admin(){
+  return $_SESSION["account"] === "admin";
+}
+*/
 function auth_is_admin(){
   if($_SESSION["account"] == "admin"){
     return true;
