@@ -299,6 +299,10 @@ session_start();
     <script >   
       $(document).ready(function (){
         $("#register-btn").click(function(){
+          /*
+            use  serialize() , instead of writing all of the form elements one by one..
+            data : $("form").serialize(),
+            */
           var name=$("#txt-name-register").val();
           var email=$("#txt-email-register").val();
           var pwd =$('#txt-pass-register').val();
