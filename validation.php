@@ -4,6 +4,10 @@ error_reporting(E_ALL);
 // print_r($_POST); die;
    if(isset($_POST['email_validation']) && $_POST['email_validation']==1){
     $jsonCheck = new \Exception();                                            // remove this excwption object. I wrote this just for example. No need to hve object in his scenario, use $_POST array.
+        
+            /*
+    create a sanitize() method, to sanitize inputs.  ( $email = sanitize($_POST['email']) ) , use trim() and htmlentities() in sanitize method to remove spaces and script tags (used by attackers).
+    */
         $email=$_POST['email'];
         $password=$_POST['password'];
         $jsonCheck->status=0;
