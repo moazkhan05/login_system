@@ -10,7 +10,7 @@
 
     
     // Define variables and initialize with empty values
-    $email = trim($_POST["txt-email"]);
+    $email = trim($_POST["txt-email"]);                     
     $password = trim($_POST["txt-pass"]);
     $email_err = $password_err = "";
     
@@ -81,7 +81,7 @@
                            else{
                             $_SESSION["error-status"]=true;
                             $_SESSION["error"]="Incorrect Password";
-                            $password_err="Incorrect Password";
+                            $password_err="Incorrect Password";                        // unused variable ??
                             mysqli_close($conn);
                             header("location: login-signup.php");
                            }
@@ -92,12 +92,12 @@
 
                         $_SESSION["error-status"]=true;
                         $_SESSION["error"]="No account found with that email.";
-                        $email_err = "No account found with that email.";
+                        $email_err = "No account found with that email.";                    // unused variable ??
                         mysqli_close($conn);
                         header("location: login-signup.php");
                     }
                 } else{
-                    echo "Oops! Something went wrong. Please try again later.";
+                    echo "Oops! Something went wrong. Please try again later.";                // message should be 405 method not allowed
                     mysqli_close($conn);
                     header("location: login-signup.php");
                 }
