@@ -10,7 +10,10 @@ session_start();
     $name = $email = $password = $confirm_password = $mobile_number ="";
     $name_err = $email_err = $password_err = $confirm_password_err = $mobile_number_err ="";
     
-    
+    /*
+    You are allowing user to enter raw data (tags, scripts etc) into the database. Use sanitize() method as discussed previously.
+    Use loops instead of writing tons of conditions and duplications.
+    */
 
     // Processing form data when form is submitted
     if($_SERVER["REQUEST_METHOD"] == "POST"){
