@@ -15,7 +15,7 @@
       
 <?php
 
-require 'actions.php';
+
 
 session_start();
 

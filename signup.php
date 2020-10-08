@@ -3,7 +3,7 @@
 //---------------------------------------registration function start----------------------------------------------------
 session_start();
     // Include config file
-    require 'dbconfig.php';       
+    require 'helpers.php';       
     //connection build
 
     // Define variables and initialize with empty values

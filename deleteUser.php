@@ -1,8 +1,8 @@
 <?php
 // Initialize the session
 session_start();
- 
-require 'authentication.php'; 
+require 'helpers.php'; 
+//require 'authentication.php'; 
 // Check if the user is already logged in, if yes then redirect him to welcome page
 if(auth_is_logged_in()===true){
     if(auth_is_admin()!==true){
@@ -15,7 +15,7 @@ else{
 
 $id=$_GET["del"];
 $status=$_GET["status"];
-require 'dbconfig.php';
+
 
 	
 

@@ -2,7 +2,7 @@
 // Initialize the session
 session_start();
 
-require 'authentication.php';
+require 'helpers.php';
 // Check if the user is already logged in, if yes then redirect him to welcome page
 //-----------------Authentication--------------------
 if(auth_is_logged_in() === true){

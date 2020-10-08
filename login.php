@@ -4,7 +4,7 @@
   
   session_start();
     //configuring data base
-    require 'dbconfig.php';
+    require 'helpers.php';
     //if connection build
 
 

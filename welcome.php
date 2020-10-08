@@ -1,13 +1,11 @@
 <?php
+
+
+
+//------------page load------------------------------
+require 'helpers.php'; 
 session_start();
-require 'authentication.php';
 
-// Check if the user is already logged in, if yes then redirect him to welcome page
-if(auth_is_logged_in()===false){ // auth_is_logged_in() from authentication.php
-  error401();
-}
-
-require 'actions.php';
 
 
 if(isset($_POST['btn-log-out'])){
@@ -15,10 +13,13 @@ if(isset($_POST['btn-log-out'])){
 }
 //authorization granted
 
+// Check if the user is already logged in, if yes then redirect him to welcome page
+if(auth_is_logged_in()===false){ // auth_is_logged_in() from authentication.php
+  error401();
+}
 
-//------------page load------------------------------
-require 'dbconfig.php'; 
-    // Check if the user is already logged in, if yes then redirect him to welcome page
+
+// Check if the user is already logged in, if yes then redirect him to welcome page
     
     $id=$_SESSION["id"];
     // Prepare a select statement

@@ -1,8 +1,7 @@
 <?php
 session_start();
-require 'authentication.php';
-require 'dbconfig.php';
-require 'actions.php';
+require 'helpers.php';
+//require 'actions.php';
 
 // Check if the user is already logged in, if yes then redirect him to welcome page
 if(auth_is_logged_in()===false){
