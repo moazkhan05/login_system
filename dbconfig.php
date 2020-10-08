@@ -1,4 +1,6 @@
 <?php
+require_once 'helpers.php';
+//require_once 'authentication.php';
     $host = 'localhost';
     $dbname = 'testing_db';
     $username = 'root';

@@ -16,15 +16,15 @@ session_start();
     if($_SERVER["REQUEST_METHOD"] == "POST"){
     
         // Validate name
-        if(empty(trim($_POST["txtName"]))){
-            $name_err = "Please enter a name.";
+        if(empty(sanitize($_POST["txtName"]))){  //sanitize this function is present in helpers file 
+            $name_err = "Please enter a name.";   
         } else{
             //name could be same email should be unique
-            $name = trim($_POST["txtName"]);
+            $name = sanitize($_POST["txtName"]);
         }
 
         // Validate email
-        if(empty(trim($_POST["txtEmail"]))){
+        if(empty(sanitize($_POST["txtEmail"]))){ 
             $email_err = "Please enter a email.";
         } else{
             
@@ -36,7 +36,7 @@ session_start();
                 mysqli_stmt_bind_param($stmt, "s", $param_email);
                 
                 // Set parameters
-                $param_email = trim($_POST["txtEmail"]);
+                $param_email = sanitize($_POST["txtEmail"]);
                 
                 // Attempt to execute the prepared statement
                 if(mysqli_stmt_execute($stmt)){
@@ -50,7 +50,7 @@ session_start();
                         mysqli_close($conn);
                         header("location: login-signup.php");
                     } else{
-                        $email = trim($_POST["txtEmail"]);
+                        $email = sanitize($_POST["txtEmail"]);
                     }
                 } else{
                     echo "Oops! Something went wrong. Please try again later.";
@@ -62,30 +62,30 @@ session_start();
         }
         
         // Validate password
-        if(empty(trim($_POST["txtPass"]))){
+        if(empty(sanitize($_POST["txtPass"]))){
             $password_err = "Please enter a password.";     
-        } elseif(strlen(trim($_POST["txtPass"])) < 5){
+        } elseif(strlen(sanitize($_POST["txtPass"])) < 5){
             $password_err = "Password must have atleast 5 characters.";
             $_SESSION["error-status"]=true;
             $_SESSION["error"]=$password_err;
             mysqli_close($conn);
             header("location: login-signup.php");
         } else{
-            $password = trim($_POST["txtPass"]);
+            $password = sanitize($_POST["txtPass"]);
         }
         
         // Validate confirm password
-        if(empty(trim($_POST["txt-confirm-pass"]))){
+        if(empty(sanitize($_POST["txt-confirm-pass"]))){
             $confirm_password_err = "Please confirm password.";     
         } else{
-            $confirm_password = trim($_POST["txt-confirm-pass"]);
+            $confirm_password = sanitize($_POST["txt-confirm-pass"]);
             if(empty($password_err) && ($password != $confirm_password)){
                 $confirm_password_err = "Password did not match.";
             }
         }
 
         // Validate mobile number
-        if(empty(trim($_POST["txt-mobile"]))){
+        if(empty(sanitize($_POST["txt-mobile"]))){
             $mobile_number_err = "Please enter your number.";
         } else{
             // Prepare a select statement
@@ -96,7 +96,7 @@ session_start();
                 mysqli_stmt_bind_param($stmt, "s", $param_mobile_number);
                 
                 // Set parameters
-                $param_mobile_number = trim($_POST["txt-mobile"]);
+                $param_mobile_number = sanitize($_POST["txt-mobile"]);
                 
                 // Attempt to execute the prepared statement
                 if(mysqli_stmt_execute($stmt)){
@@ -112,7 +112,7 @@ session_start();
                         header("location: login-signup.php");
                     } else{
                         
-                        $mobile_number = trim($_POST["txt-mobile"]);
+                        $mobile_number = sanitize($_POST["txt-mobile"]);
                     }
                 } else{
                     echo "Oops! Something went wrong. Please try again later.";
@@ -145,9 +145,7 @@ session_start();
                 // Attempt to execute the prepared statement
                 if(mysqli_stmt_execute($stmt)){
                     // Redirect to login page
-
-
-                    header("location: index.php");
+                  header("location: index.php");
                 } else{
                     echo "Something went wrong. Please try again later.";
                 }

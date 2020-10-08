@@ -10,8 +10,8 @@
 
     
     // Define variables and initialize with empty values
-    $email = trim($_POST["txt-email"]);
-    $password = trim($_POST["txt-pass"]);
+    $email = sanitize($_POST["txt-email"]);
+    $password = sanitize($_POST["txt-pass"]);
     $email_err = $password_err = "";
     
     // Processing form data when form is submitted
@@ -81,7 +81,7 @@
                            else{
                             $_SESSION["error-status"]=true;
                             $_SESSION["error"]="Incorrect Password";
-                            $password_err="Incorrect Password";
+                           // $password_err="Incorrect Password";
                             mysqli_close($conn);
                             header("location: login-signup.php");
                            }
@@ -92,12 +92,15 @@
 
                         $_SESSION["error-status"]=true;
                         $_SESSION["error"]="No account found with that email.";
-                        $email_err = "No account found with that email.";
+                        //$email_err = "No account found with that email.";
                         mysqli_close($conn);
                         header("location: login-signup.php");
                     }
-                } else{
-                    echo "Oops! Something went wrong. Please try again later.";
+                } 
+                else{
+                    $_SESSION["error-status"]=true;
+                    $_SESSION["error"]="Oops! Something went wrong. Please try again later.";
+                   
                     mysqli_close($conn);
                     header("location: login-signup.php");
                 }
