@@ -9,6 +9,10 @@ function error403(){
   echo ("Error 403: You do  not have authorization for this page");
   die();
 }
+function error($var){
+  echo $var;
+  die();
+}
 //-------------END Errors---------------------------
 
 //-------------Authentication functions---------------------------

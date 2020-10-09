@@ -66,7 +66,12 @@ session_start();
                     <strong><?php echo htmlspecialchars($_SESSION['error']) ?> </strong>
                   </div>
                 <?php }?>
-                  
+                <?php if(isset($_SESSION['success-status']) && $_SESSION['success-status']==true ){?>
+                  <div id="error-alert" class="alert alert-success alert-dismissible" style="display:block;">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <strong><?php echo htmlspecialchars($_SESSION['success']) ?> </strong>
+                  </div>
+                <?php }?>  
                     
                 <form id="login_form" method="post" action="login.php">
                     
@@ -223,7 +228,7 @@ session_start();
   <!-- jQuery (Bootstrap JS plugins depend on it) -->
   
   <script src="js/bootstrap.min.js"></script>
-  <script src="js/ajax-utils.js"></script>
+  <!-- <script src="js/ajax-utils.js"></script> -->
   <script src="./js/script.js"></script> 
   
    

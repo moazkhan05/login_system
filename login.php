@@ -99,7 +99,7 @@
                 } 
                 else{
                     $_SESSION["error-status"]=true;
-                    $_SESSION["error"]="Oops! Something went wrong. Please try again later.";
+                    $_SESSION["error"]="Error 500! Something went wrong. Please try again later.";
                    
                     mysqli_close($conn);
                     header("location: login-signup.php");

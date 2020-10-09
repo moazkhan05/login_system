@@ -1,9 +1,9 @@
 <?php
 require_once 'helpers.php';
-
+parse_str($_POST['data'], $data);
    if(isset($_POST['email_validation']) && $_POST['email_validation']==1){
         
-        parse_str($_POST['data'], $data);
+        
         $email=sanitize($data['txt-email']);
         $password=sanitize($data['txt-pass']);
         $jsonCheck['status']=1;
@@ -27,7 +27,7 @@ require_once 'helpers.php';
             $error['is_pwd']="Enter Password to proceed";
         }
         else{
-            if(!preg_match("/^([A-Za-z0-9]{5,})$/",$password)){
+            if(!validPassword($password)){
                 $error['is_pwd']="Invalid! ";
                 $jsonCheck['status']=0;
             }
@@ -40,25 +40,24 @@ require_once 'helpers.php';
    }
 
    if(isset($_POST['registration-validation']) && $_POST['registration-validation']==1){
-   
-        parse_str($_POST['data'], $data);
+    
         $name=sanitize($data['txtName']);
-        $email=sanitizie($data['txtEmail']);
-        $pass=sanitizie($data['txtPass']);
-        $cnfrm_pass=sanitizie($data['txt-confirm-pass']);
-        $number=sanitizie($data['txt-mobile']);
+        $email=sanitize($data['txtEmail']);
+        $pass=sanitize($data['txtPass']);
+        $cnfrm_pass=sanitize($data['txt-confirm-pass']);
+        $number=sanitize($data['txt-mobile']);
         $jsonCheck['status']=1;
         $jsonCheck['errors']=null;
         $error = ['name_check' => null,'email_check' => null,
         'pwd_check' => null,'cnfrm_pwd_check' => null , 'number_check'=>null];
-        
+   
         //name validation
         if(empty($name)){
             $error['name_check']="Enter Name";
             $jsonCheck['status']=0;
         }
         else{
-            if(!preg_match("/^([A-Za-z' ]+)$/",$name)){
+            if(!validName($name)){
                 $error['name_check']="Invalid! Name must have alphabets only";
                 $jsonCheck['status']=0;
             }
@@ -77,6 +76,10 @@ require_once 'helpers.php';
                 $error['email_check']="Invalid Email Address";
                 $jsonCheck['status']=0;
             }
+            if(email_exist($email,$conn)>=1){
+                $error['email_check']="Email Exist";
+                $jsonCheck['status']=0;
+            }
         }
         //email validation ends
 
@@ -86,7 +89,7 @@ require_once 'helpers.php';
             $jsonCheck['status']=0;
         }
         else{
-            if(!preg_match("/^([A-Za-z0-9]{5,})$/",$pass)){
+            if(!validPassword($pass)){
                 $error['pwd_check']="Password must contains atleast 5 alphanumeric characters";
                 $jsonCheck['status']=0;
             }
@@ -115,11 +118,14 @@ require_once 'helpers.php';
             $jsonCheck['status']=0;
         }
         else{
-            if(!preg_match("/^([\d]{11})$/",$number)){
+            if(!validNumber($number)){
                 $error['number_check']="Invalid Phone Number";
                 $jsonCheck['status']=0;
             }
-            
+            if(number_exist($number,$conn)>=1){
+                $error['number_check']="Mobile Number Exist";
+                $jsonCheck['status']=0;
+            }
         }
         //phone validation ends
 
