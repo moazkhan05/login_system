@@ -115,14 +115,15 @@ require_once 'authentication.php';
     function redirect($var,$status, $msg){
         if($var == "error"){
                 $_SESSION["error-status"]=$status;
-                $_SESSION["error"]=$msg;
+                $_SESSION["msg"]=$msg;
                 header("location: login-signup.php");
             }
         else if($var=="success"){
-                $_SESSION["success-status"]=$status;
-                $_SESSION["success"]=$msg;
+                $_SESSION["success-status"]=$status;  
+                $_SESSION["msg"]=$msg;
                 header("location: index.php");
         }
     }
 //------redirecting funciton end
+
 ?> 

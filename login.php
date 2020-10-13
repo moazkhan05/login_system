@@ -12,30 +12,36 @@
     // Define variables and initialize with empty values
     $email = sanitize($_POST["txt-email"]);
     $password = sanitize($_POST["txt-pass"]);
-    $email_err = $password_err = "";
+    $error_flag=1;
     
     // Processing form data when form is submitted
     if($_SERVER["REQUEST_METHOD"] == "POST"){
         
         // Check if email is empty
         if(empty($email)){
-            $email_err = "Please enter email.";
+            mysqli_close($conn);
+            $error_flag=0; 
+            redirect("error",true, "Please enter email.");
             
         } 
         else{
             if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $email_err="Invalid Email Address";
+                mysqli_close($conn);
+                $error_flag=0; 
+                redirect("error",true, "Invalid Email Address");
             }
         }
         
         // Check if password is empty
         if(empty($password)){
-            $password_err = "Please enter your password.";   
+            mysqli_close($conn);
+            $error_flag=0; 
+            redirect("error",true, "Please enter your password.");   
         }
         
         
         // Validate credentials
-        if(empty($email_err) && empty($password_err)){
+        if($error_flag==1){
 
             // Prepare a select statement
             $sql = "SELECT  id,email, password,account_type FROM tbl_user WHERE email = ?";
@@ -78,31 +84,21 @@
                                }
 
                            }
-                           else{
-                            $_SESSION["error-status"]=true;
-                            $_SESSION["error"]="Incorrect Password";
-                           // $password_err="Incorrect Password";
+                           else{ 
                             mysqli_close($conn);
-                            header("location: login-signup.php");
+                            redirect("error",true, "Incorrect Password");
                            }
                           
                         }
                     } else{
-                        // Display an error message if email doesn't exist
-
-                        $_SESSION["error-status"]=true;
-                        $_SESSION["error"]="No account found with that email.";
-                        //$email_err = "No account found with that email.";
+                        // Display an error message if email doesn't exist             
                         mysqli_close($conn);
-                        header("location: login-signup.php");
+                        redirect("error",true, "No account found with that email.");
                     }
                 } 
                 else{
-                    $_SESSION["error-status"]=true;
-                    $_SESSION["error"]="Error 500! Something went wrong. Please try again later.";
-                   
                     mysqli_close($conn);
-                    header("location: login-signup.php");
+                    redirect("error",true, "Error 500! Something went wrong. Please try again later.");
                 }
 
                 

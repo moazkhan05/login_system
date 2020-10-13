@@ -63,13 +63,13 @@ session_start();
                 <?php if(isset($_SESSION['error-status']) && $_SESSION['error-status']==true ){?>
                   <div id="error-alert" class="alert alert-danger alert-dismissible" style="display:block;">
                     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <strong><?php echo htmlspecialchars($_SESSION['error']) ?> </strong>
+                    <strong><?php echo htmlspecialchars($_SESSION['msg']) ?> </strong>
                   </div>
                 <?php }?>
                 <?php if(isset($_SESSION['success-status']) && $_SESSION['success-status']==true ){?>
                   <div id="error-alert" class="alert alert-success alert-dismissible" style="display:block;">
                     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <strong><?php echo htmlspecialchars($_SESSION['success']) ?> </strong>
+                    <strong><?php echo htmlspecialchars($_SESSION['msg']) ?> </strong>
                   </div>
                 <?php }?>  
                     
